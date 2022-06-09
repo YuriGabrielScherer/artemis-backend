@@ -1,12 +1,11 @@
 package br.com.karate.controller.abstracts;
 
+import br.com.karate.converter.PageableConverter;
 import br.com.karate.converter.abstracts.AbstractConverter;
-import br.com.karate.model.util.controller.input.FilterInput;
 import br.com.karate.model.util.pageable.PageableDto;
 import br.com.karate.model.util.pageable.PageableOutput;
 import br.com.karate.service.abstracts.CrudAbstractService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 public abstract class CrudAbstractController<T, I, O, Filter> extends AbstractController {
@@ -22,6 +20,8 @@ public abstract class CrudAbstractController<T, I, O, Filter> extends AbstractCo
     @Autowired
     private CrudAbstractService<T, Filter> service;
 
+    @Autowired
+    protected PageableConverter pageableConverter;
     @Autowired
     private AbstractConverter<T, I, O, Filter> converter;
 
@@ -32,8 +32,9 @@ public abstract class CrudAbstractController<T, I, O, Filter> extends AbstractCo
 
     @GetMapping("/list")
     @Transactional(readOnly = true)
-    public ResponseEntity<PageableOutput> list(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam(value = "filter", required = false) String filter) throws JsonProcessingException {
-        final Page<T> pagedResult = service.list(new PageableDto(page, size), converter.toFilter(filter));
+    public ResponseEntity<PageableOutput> list(@RequestParam String pageable, @RequestParam(value = "filter", required = false) String filter) throws JsonProcessingException {
+        final PageableDto pageableDto = pageableConverter.toDto(pageable);
+        final Page<T> pagedResult = service.list(pageableDto, converter.toFilter(filter));
         return ResponseEntity.ok(new PageableOutput(converter.toDto(pagedResult.getContent()), pagedResult.getTotalElements()));
     }
 

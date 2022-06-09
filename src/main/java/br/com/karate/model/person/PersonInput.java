@@ -3,7 +3,6 @@ package br.com.karate.model.person;
 import br.com.karate.enums.EnumGender;
 import br.com.karate.model.association.AssociationInput;
 import br.com.karate.model.athlete.AthleteInput;
-import br.com.karate.model.util.controller.input.FilterInput;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,11 +33,12 @@ public class PersonInput {
 
         public long associationCode;
     }
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Setter
     @Getter
-    public static class Filter extends FilterInput {
+    public static class Filter {
         public String name;
         public long code;
         public EnumGender gender;

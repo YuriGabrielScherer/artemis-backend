@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/association")
-public class AssociationController extends CrudAbstractController<Association, AssociationInput.Save, AssociationOutput.Dto,  AssociationInput.Save> {
+public class AssociationController extends CrudAbstractController<Association, AssociationInput.Save, AssociationOutput.Dto,  AssociationInput.Filter> {
 
 }

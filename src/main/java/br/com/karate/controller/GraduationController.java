@@ -33,7 +33,7 @@ import static br.com.karate.model.graduation.GraduationInput.*;
 @RestController
 @RequestMapping("/graduation")
 @Slf4j
-public class GraduationController extends CrudAbstractController<Graduation, Save, GraduationOutput.Dto, Save> {
+public class GraduationController extends CrudAbstractController<Graduation, Save, GraduationOutput.Dto, Filter> {
 
     @Autowired
     private GraduationService service;

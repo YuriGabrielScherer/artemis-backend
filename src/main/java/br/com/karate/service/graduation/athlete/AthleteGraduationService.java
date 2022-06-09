@@ -13,6 +13,8 @@ public interface AthleteGraduationService {
 
     public AthleteGraduation findByGraduationAndAthleteCode(Graduation graduation, Long code);
 
+    public Page<AthleteGraduation> findByAthlete(Athlete athlete, PageableDto pageableDto);
+
     public Page<AthleteGraduation> findByGraduation(Graduation graduation, PageableDto pageableDto);
 
     public void setAthleteGrade(Graduation graduation, Athlete athlete, double grade);

@@ -42,7 +42,7 @@ public class GraduationGradeConverter {
         return output;
     }
 
-    private ProfessorGradeDto toProfessorGradeDto(GraduationGrade grade) {
+    public ProfessorGradeDto toProfessorGradeDto(GraduationGrade grade) {
         final ProfessorGradeDto dto = new ProfessorGradeDto();
 
         dto.grade = grade.getGrade();

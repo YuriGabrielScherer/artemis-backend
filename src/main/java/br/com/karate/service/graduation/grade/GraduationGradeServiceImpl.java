@@ -58,6 +58,10 @@ public class GraduationGradeServiceImpl implements GraduationGradeService {
     }
 
     @Override
+    public List<GraduationGrade> listGradesByGraduations(Athlete athlete, List<Graduation> graduations) {
+        return repository.findByAthleteAndGraduationIn(athlete, graduations);
+    }
+    @Override
     @Transactional
     public void removeProfessors(List<Graduation> graduations, List<Professor> professors) {
         repository.deleteByGraduationInAndProfessorIn(graduations, professors);

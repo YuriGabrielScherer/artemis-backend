@@ -2,9 +2,10 @@ package br.com.karate.converter;
 
 import br.com.karate.converter.abstracts.AbstractConverter;
 import br.com.karate.model.graduation.Graduation;
-import br.com.karate.model.graduation.GraduationInput;
 import br.com.karate.model.graduation.GraduationOutput;
 import br.com.karate.model.graduation.history.GraduationHistory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,14 +13,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static br.com.karate.model.graduation.GraduationInput.Filter;
+import static br.com.karate.model.graduation.GraduationInput.Save;
+
 @Component
-public class GraduationConverter implements AbstractConverter<Graduation, GraduationInput.Save, GraduationOutput.Dto, GraduationInput.Save> {
+public class GraduationConverter implements AbstractConverter<Graduation, Save, GraduationOutput.Dto, Filter> {
 
     @Autowired
     private GraduationHistoryConverter historyConverter;
 
     @Override
-    public Graduation toEntity(GraduationInput.Save input) {
+    public Graduation toEntity(Save input) {
         final Graduation graduation = new Graduation();
 
         graduation.setTitle(input.title);
@@ -33,6 +37,10 @@ public class GraduationConverter implements AbstractConverter<Graduation, Gradua
 
     @Override
     public GraduationOutput.Dto toDto(Graduation entity) {
+        if (entity == null) {
+            return null;
+        }
+
         final GraduationOutput.Dto dto = toSimpleDto(entity);
 
         final Set<GraduationHistory> history = entity.getHistory();
@@ -48,6 +56,9 @@ public class GraduationConverter implements AbstractConverter<Graduation, Gradua
 
     @Override
     public GraduationOutput.Dto toSimpleDto(Graduation entity) {
+        if (entity == null) {
+            return null;
+        }
         final GraduationOutput.Dto dto = new GraduationOutput.Dto();
         dto.code = entity.getCode();
         dto.title = entity.getTitle();
@@ -65,7 +76,12 @@ public class GraduationConverter implements AbstractConverter<Graduation, Gradua
     }
 
     @Override
-    public GraduationInput.Save toFilter(String filterInput) {
-        return null;
+    public Filter toFilter(String filterInput) throws JsonProcessingException {
+        if (filterInput == null || filterInput.length() == 0) {
+            return new Filter();
+        }
+
+        final Filter output = new ObjectMapper().readValue(filterInput, Filter.class);
+        return output;
     }
 }

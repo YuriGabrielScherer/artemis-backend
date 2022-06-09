@@ -61,8 +61,14 @@ public class AthleteGraduationServiceImpl implements AthleteGraduationService {
     }
 
     @Override
+    public Page<AthleteGraduation> findByAthlete(Athlete athlete, PageableDto pageableDto) {
+        Pageable pageable = PageRequest.of(pageableDto.getPage(), pageableDto.getSize());
+        return repository.findByAthlete(athlete, pageable);
+    }
+
+    @Override
     public Page<AthleteGraduation> findByGraduation(Graduation graduation, PageableDto pageableDto) {
-        Pageable pageable = PageRequest.of(pageableDto.getPage(), pageableDto.getSize(), pageableDto.getDirection(), "athlete.person.name");
+        Pageable pageable = PageRequest.of(pageableDto.getPage(), pageableDto.getSize());
         return repository.findByGraduation(graduation, pageable);
     }
 

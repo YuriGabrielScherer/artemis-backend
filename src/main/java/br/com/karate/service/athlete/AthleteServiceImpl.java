@@ -89,8 +89,7 @@ public class AthleteServiceImpl implements AthleteService {
 
     @Override
     public Page<Athlete> list(PageableDto input, AthleteInput.Filter filter) {
-        Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "since");  // TODO Ajustar properties
-        return repository.findAll(pageable);
+        return repository.findAll(input.getPageable());
     }
 
     @Override
@@ -107,7 +106,7 @@ public class AthleteServiceImpl implements AthleteService {
 
     @Override
     public Page<Athlete> findAvailableAthletesToGraduation(Graduation graduation, PageableDto input) {
-        final Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "person.name");
+        final Pageable pageable = PageRequest.of(input.getPage(), input.getSize());
         return customRepository.findAvailableAthletesToGraduation(graduation, pageable);
     }
 }

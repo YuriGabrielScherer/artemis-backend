@@ -61,9 +61,8 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
-    public Page<Professor> list(PageableDto input, ProfessorInput.Save filter) {
-        Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "id");  // TODO Ajustar properties
-        return repository.findAll(pageable);
+    public Page<Professor> list(PageableDto input, ProfessorInput.Filter filter) {
+        return repository.findAll(input.getPageable());
     }
 
     @Override
@@ -85,13 +84,13 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public Page<Professor> findAvailableProfessorsToGraduation(Graduation graduation, PageableDto input) {
-        final Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "id", "person.code");
+        final Pageable pageable = PageRequest.of(input.getPage(), input.getSize());
         return customRepository.findAvailableProfessorsToGraduation(graduation, pageable);
     }
 
     @Override
     public Page<Professor> findProfessorsByGraduation(Graduation graduation, PageableDto input) {
-        final Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "id", "person.code");
+        final Pageable pageable = PageRequest.of(input.getPage(), input.getSize());
         return repository.findAllByGraduationsIn(List.of(graduation), pageable);
     }
 }

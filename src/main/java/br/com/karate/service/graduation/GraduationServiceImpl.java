@@ -10,6 +10,7 @@ import br.com.karate.model.graduation.grades.GraduationGrade;
 import br.com.karate.model.graduation.history.GraduationHistory;
 import br.com.karate.model.professor.Professor;
 import br.com.karate.model.util.pageable.PageableDto;
+import br.com.karate.repository.graduation.GraduationCustomRepository;
 import br.com.karate.repository.graduation.GraduationRepository;
 import br.com.karate.service.athlete.AthleteService;
 import br.com.karate.service.graduation.athlete.AthleteGraduationService;
@@ -36,6 +37,9 @@ public class GraduationServiceImpl implements GraduationService {
 
     @Autowired
     private GraduationRepository repository;
+
+    @Autowired
+    private GraduationCustomRepository customRepository;
 
     @Autowired
     private ProfessorService professorService;
@@ -102,9 +106,8 @@ public class GraduationServiceImpl implements GraduationService {
     }
 
     @Override
-    public Page<Graduation> list(PageableDto input, GraduationInput.Save filter) {
-        Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "code");  // TODO Ajustar properties
-        return repository.findAll(pageable);
+    public Page<Graduation> list(PageableDto input, GraduationInput.Filter filter) {
+        return customRepository.list(filter, input.getPageable());
     }
 
 

@@ -7,7 +7,7 @@ import br.com.karate.service.abstracts.CrudAbstractService;
 
 import java.util.List;
 
-public interface GraduationService extends CrudAbstractService<Graduation, GraduationInput.Save> {
+public interface GraduationService extends CrudAbstractService<Graduation, GraduationInput.Filter> {
 
     public void updateStatus(Long code, EnumGraduationSituation newSituation);
 

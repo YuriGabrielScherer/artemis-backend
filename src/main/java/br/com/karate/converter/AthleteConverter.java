@@ -35,7 +35,7 @@ public class AthleteConverter implements AbstractConverter<Athlete, Save, Athlet
         AthleteOutput.Dto dto = new AthleteOutput.Dto();
 
         dto.since = athlete.getSince();
-        dto.belt = athlete.getCurrentBelt().getBelt();
+        dto.currentBelt = athlete.getCurrentBelt().getBelt();
 
         if (athlete.getPerson() != null) {
             dto.person = personConverter.toDto(athlete.getPerson());
@@ -63,6 +63,9 @@ public class AthleteConverter implements AbstractConverter<Athlete, Save, Athlet
 
     @Override
     public Filter toFilter(String filterInput) throws JsonProcessingException {
+        if (filterInput == null || filterInput.length() == 0) {
+            return new Filter();
+        }
         final Filter filter = new ObjectMapper().readValue(filterInput, Filter.class);
         return filter;
     }

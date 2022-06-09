@@ -11,7 +11,7 @@ public class AthleteOutput {
     @EqualsAndHashCode
     public static class Dto {
         public LocalDate since;
-        public EnumBelt belt;
+        public EnumBelt currentBelt;
         public PersonOutput.Dto person;
     }
 

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/professor")
-public class ProfessorController extends CrudAbstractController<Professor, ProfessorInput.Save, ProfessorOutput.Dto, ProfessorInput.Save> {
+public class ProfessorController extends CrudAbstractController<Professor, ProfessorInput.Save, ProfessorOutput.Dto, ProfessorInput.Filter> {
 
     @Autowired
     private ProfessorService service;

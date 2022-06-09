@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ProfessorConverter implements AbstractConverter<Professor, ProfessorInput.Save, ProfessorOutput.Dto, ProfessorInput.Save> {
+public class ProfessorConverter implements AbstractConverter<Professor, ProfessorInput.Save, ProfessorOutput.Dto, ProfessorInput.Filter> {
 
     @Autowired
     private PersonConverter personConverter;
@@ -47,7 +47,7 @@ public class ProfessorConverter implements AbstractConverter<Professor, Professo
     }
 
     @Override
-    public ProfessorInput.Save toFilter(String filterInput) {
+    public ProfessorInput.Filter toFilter(String filterInput) {
         return null;
     }
 }

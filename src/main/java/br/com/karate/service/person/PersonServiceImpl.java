@@ -89,8 +89,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Page<Person> list(PageableDto input, PersonInput.Filter filter) {
-        Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "code"); // TODO Ajustar properties
-        return customRepository.list(filter, pageable);
+        return customRepository.list(filter, input.getPageable());
     }
 
     @Override

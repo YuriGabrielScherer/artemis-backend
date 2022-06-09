@@ -72,9 +72,8 @@ public class AssociationServiceImpl implements AssociationService {
     }
 
     @Override
-    public Page<Association> list(PageableDto input, AssociationInput.Save filter) {
-        Pageable pageable = PageRequest.of(input.getPage(), input.getSize(), input.getDirection(), "code");  // TODO Ajustar properties
-        return repository.findAll(pageable);
+    public Page<Association> list(PageableDto input, AssociationInput.Filter filter) {
+        return repository.findAll(input.getPageable());
     }
 
     @Override

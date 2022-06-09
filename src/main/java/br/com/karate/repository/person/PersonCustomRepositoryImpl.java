@@ -4,11 +4,15 @@ import br.com.karate.model.athlete.QAthlete;
 import br.com.karate.model.person.Person;
 import br.com.karate.model.person.PersonInput;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -28,7 +32,7 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
         final BooleanBuilder predicate = new BooleanBuilder();
 
         if (filter.name != null && filter.name.trim().length() > 0) {
-            predicate.and(person.name.likeIgnoreCase("%" + filter.name +"%"));
+            predicate.and(person.name.likeIgnoreCase("%" + filter.name + "%"));
         }
 
         if (filter.document != null && filter.document.trim().length() > 0) {
@@ -55,6 +59,12 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
         }
 
         final long count = query.stream().count();
+
+
+        PathBuilder<Person> orderByExpression = new PathBuilder(Person.class, Person.class.getSimpleName().toLowerCase());
+        for (Sort.Order o : pageable.getSort()) {
+            query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, orderByExpression.get(o.getProperty())));
+        }
         final List<Person> people = query.limit(pageable.getPageSize()).offset(pageable.getOffset()).fetch();
 
         return new PageImpl<>(people, pageable, count);

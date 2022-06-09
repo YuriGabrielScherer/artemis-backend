@@ -1,7 +1,7 @@
 package br.com.karate.model.graduation;
 
 import br.com.karate.enums.EnumGraduationSituation;
-import br.com.karate.model.util.controller.input.FilterInput;
+import br.com.karate.model.athlete.AthleteInput;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,12 +36,14 @@ public class GraduationInput {
     @AllArgsConstructor
     @Setter
     @Getter
-    public static class Filter extends FilterInput {
+    public static class Filter {
         public long code;
         public String title;
         public String description;
         public String place;
         public LocalDate date;
+
+        public List<Long> athletesCode;
     }
 
     public static class UpdateStatus {

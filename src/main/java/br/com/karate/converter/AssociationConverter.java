@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 
 @Component
-public class AssociationConverter implements AbstractConverter<Association, AssociationInput.Save, AssociationOutput.Dto, AssociationInput.Save> {
+public class AssociationConverter implements AbstractConverter<Association, AssociationInput.Save, AssociationOutput.Dto, AssociationInput.Filter> {
     @Override
     public Association toEntity(AssociationInput.Save input) {
         final Association output = new Association();
@@ -74,7 +74,7 @@ public class AssociationConverter implements AbstractConverter<Association, Asso
     }
 
     @Override
-    public AssociationInput.Save toFilter(String filterInput) {
+    public AssociationInput.Filter toFilter(String filterInput) {
         return null;
     }
 
