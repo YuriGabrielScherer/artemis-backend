@@ -32,7 +32,17 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public Professor save(Professor input) {
-        return null;
+        Professor professor = findByCode(input.getPerson().getCode());
+        if (professor == null) {
+            professor = new Professor();
+            final Person person = personService.findByCodeThrowsException(input.getPerson().getCode());
+            if (person.getAssociation() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Professores devem estar associados a uma associação.");
+            }
+            professor.setPerson(person);
+        }
+
+        return repository.save(professor);
     }
 
     @Override

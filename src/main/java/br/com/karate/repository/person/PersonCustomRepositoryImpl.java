@@ -3,6 +3,7 @@ package br.com.karate.repository.person;
 import br.com.karate.model.athlete.QAthlete;
 import br.com.karate.model.person.Person;
 import br.com.karate.model.person.PersonInput;
+import br.com.karate.model.professor.QProfessor;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -50,12 +51,12 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
         JPAQuery<Person> query = new JPAQuery(em);
         query.select(person).from(person).where(predicate);
 
-        if (filter.onlyPerson == true) {
-            query.where(person.id.notIn(JPAExpressions.select(QAthlete.athlete.person.id).from(QAthlete.athlete)));
+        if (filter.notProfessor == true) {
+            query.where(person.id.notIn(JPAExpressions.select(QProfessor.professor.person.id).from(QProfessor.professor)));
         }
 
-        if (filter.onlyAthlete == true) {
-            query.where(person.id.in(JPAExpressions.select(QAthlete.athlete.person.id).from(QAthlete.athlete)));
+        if (filter.notAthlete == true) {
+            query.where(person.id.notIn(JPAExpressions.select(QAthlete.athlete.person.id).from(QAthlete.athlete)));
         }
 
         final long count = query.stream().count();

@@ -42,6 +42,10 @@ public class AthleteServiceImpl implements AthleteService {
     public Athlete save(Athlete input) {
         final Person person = personService.findByCodeThrowsException(input.getPerson().getCode());
 
+        if (person.getAssociation() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O atleta deve estar vinculado a uma associação.");
+        }
+
         Athlete athlete = person.getAthlete();
         if (athlete == null) {
             athlete = new Athlete();

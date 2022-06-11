@@ -44,8 +44,8 @@ public class PersonInput {
         public EnumGender gender;
         public String document;
         public LocalDate birth;
-        public boolean onlyPerson;
-        public boolean onlyAthlete;
+        public boolean notProfessor;
+        public boolean notAthlete;
         public AssociationInput.Filter association;
         public AthleteInput.Filter athlete;
     }

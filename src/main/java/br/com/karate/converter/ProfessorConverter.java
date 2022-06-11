@@ -1,6 +1,7 @@
 package br.com.karate.converter;
 
 import br.com.karate.converter.abstracts.AbstractConverter;
+import br.com.karate.model.person.Person;
 import br.com.karate.model.professor.Professor;
 import br.com.karate.model.professor.ProfessorInput;
 import br.com.karate.model.professor.ProfessorOutput;
@@ -19,6 +20,10 @@ public class ProfessorConverter implements AbstractConverter<Professor, Professo
     @Override
     public Professor toEntity(ProfessorInput.Save input) {
         final Professor output = new Professor();
+        final Person person = new Person();
+        person.setCode(input.code);
+        output.setPerson(person);
+
         return output;
     }
 
