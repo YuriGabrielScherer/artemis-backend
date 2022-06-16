@@ -16,7 +16,7 @@ public interface GraduationGradeService {
     public List<GraduationGrade> listGradesByAthletes(Graduation graduation, List<Athlete> athletes);
 
     public List<GraduationGrade> listGradesByGraduations(Athlete athlete, List<Graduation> graduations);
-    public void removeProfessors(List<Graduation> graduations, List<Professor> professors);
+    public void removeProfessors(Graduation graduation, List<Professor> professors);
 
     public List<Athlete> verifyAllGradesSet(Graduation graduation);
 

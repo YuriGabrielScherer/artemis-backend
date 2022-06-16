@@ -19,8 +19,6 @@ import br.com.karate.service.professor.ProfessorService;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -55,13 +53,16 @@ public class GraduationServiceImpl implements GraduationService {
 
     @Override
     public Graduation save(Graduation input) {
+        Graduation graduation = repository.findByCode(input.getCode()).orElse(null);
 
-        final Graduation graduation = repository.findByCode(input.getCode()).orElse(new Graduation());
+        if (graduation == null) {
+            graduation = new Graduation();
+            graduation.setCode(getNextCode());
+        }
 
         graduation.setTitle(input.getTitle());
         graduation.setDescription(input.getDescription());
         graduation.setPlace(input.getPlace());
-        graduation.setCode(input.getCode());
 
         if (graduation.getDate() == null && input.getDate().isBefore(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Data do exame não pode ser antes que a data atual.");
@@ -142,12 +143,8 @@ public class GraduationServiceImpl implements GraduationService {
     }
 
     @Override
-    public void registerProfessors(List<Long> graduationCode, List<Long> professorsCode) {
-        final List<Graduation> graduations = repository.findAllByCodeIn(graduationCode);
-
-        if (CollectionUtils.isEmpty(graduations)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nenhum exame de graduação encontrado.");
-        }
+    public void registerProfessors(Long graduationCode, List<Long> professorsCode) {
+        final Graduation graduation = findByCodeThrowsException(graduationCode);
 
         final List<Professor> professors = professorService.findAllByCode(professorsCode);
 
@@ -156,29 +153,17 @@ public class GraduationServiceImpl implements GraduationService {
         }
 
         final List<EnumGraduationSituation> situations = List.of(EnumGraduationSituation.CANCELED, EnumGraduationSituation.FINISHED);
-        graduations.forEach(graduation -> {
-            if (situations.contains(graduation.getSituation().getSituation())) {
-                // TODO voltar com o negócio dos erros
-            } else {
-                graduation.addProfessors(professors);
-            }
-        });
+        graduation.addProfessors(professors);
 
-        repository.saveAll(graduations);
-        for (Graduation graduation : graduations) {
-            if (EnumGraduationSituation.CLOSE_SUBSCRIPTION.equals(graduation.getSituation().getSituation())) {
-                createGraduationGrades(graduation);
-            }
+        repository.save(graduation);
+        if (EnumGraduationSituation.CLOSE_SUBSCRIPTION.equals(graduation.getSituation().getSituation())) {
+            createGraduationGrades(graduation);
         }
     }
 
     @Override
-    public void removeProfessors(List<Long> graduationsCode, List<Long> professorsCode) {
-        final List<Graduation> graduations = repository.findAllByCodeIn(graduationsCode);
-
-        if (CollectionUtils.isEmpty(graduations)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nenhum exame de graduação encontrado.");
-        }
+    public void removeProfessors(Long graduationCode, List<Long> professorsCode) {
+        final Graduation graduation = findByCodeThrowsException(graduationCode);
 
         final List<Professor> professors = professorService.findAllByCode(professorsCode);
 
@@ -188,16 +173,10 @@ public class GraduationServiceImpl implements GraduationService {
 
         final List<EnumGraduationSituation> situations = List.of(EnumGraduationSituation.CANCELED, EnumGraduationSituation.FINISHED);
 
-        graduations.forEach(graduation -> {
-            if (situations.contains(graduation.getSituation().getSituation())) {
-                // TODO voltar com o negócio dos erros
-            } else {
-                professors.forEach(graduation.getProfessors()::remove);
-            }
-        });
+        professors.forEach(graduation.getProfessors()::remove);
 
-        repository.saveAll(graduations);
-        graduationGradeService.removeProfessors(graduations, professors);
+        repository.save(graduation);
+        graduationGradeService.removeProfessors(graduation, professors);
     }
 
     @Override
@@ -283,5 +262,13 @@ public class GraduationServiceImpl implements GraduationService {
                 graduationGradeService.save(graduation, athlete, professor, 0.0, null);
             }
         }
+    }
+
+    private Long getNextCode() {
+        final Graduation graduation = repository.findFirstByOrderByCodeDesc();
+        if (graduation == null) {
+            return 1L;
+        }
+        return graduation.getCode() + 1;
     }
 }

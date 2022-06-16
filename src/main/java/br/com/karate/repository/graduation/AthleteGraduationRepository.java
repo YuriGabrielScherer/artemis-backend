@@ -24,7 +24,7 @@ public interface AthleteGraduationRepository extends JpaRepository<AthleteGradua
     public Page<AthleteGraduation> findByGraduation(Graduation graduation, Pageable pageable);
 
     public Page<AthleteGraduation> findByAthlete(Athlete athlete, Pageable pageable);
-    public AthleteGraduation findFirstByAthleteAndSituationOrderByCreatedDateDesc(Athlete athlete, EnumAthleteGraduationSituation situation);
+    public AthleteGraduation findFirstByAthleteAndSituationAndGraduationNotNullOrderByGraduationDateDesc(Athlete athlete, EnumAthleteGraduationSituation situation);
 
 }
 

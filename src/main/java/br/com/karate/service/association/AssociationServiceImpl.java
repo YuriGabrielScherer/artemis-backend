@@ -4,13 +4,11 @@ import br.com.karate.model.association.Association;
 import br.com.karate.model.association.AssociationInput;
 import br.com.karate.model.person.Person;
 import br.com.karate.model.util.pageable.PageableDto;
-import br.com.karate.repository.AssociationRepository;
+import br.com.karate.repository.association.AssociationRepository;
 import br.com.karate.repository.person.PersonRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,17 +26,22 @@ public class AssociationServiceImpl implements AssociationService {
 
     @Override
     public Association save(Association input) {
-        final Association association = repository.findByCode(input.getCode()).orElse(new Association());
 
-        association.setCode(input.getCode());
-        association.setName(input.getName());
-        association.setCity(input.getCity());
         if (input.getSince() != null && input.getSince().isAfter(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Data de criação da Associação precisa ser antes de hoje.");
         }
-        association.setSince(input.getSince());
-
         final Person manager = personRepository.findByCode(input.getManager().getCode()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Responsável pela associação não encontrado."));
+
+        Association association = repository.findByCode(input.getCode()).orElse(null);
+
+        if (association == null) {
+            association = new Association();
+            association.setCode(getNextCode());
+        }
+
+        association.setName(input.getName());
+        association.setCity(input.getCity());
+        association.setSince(input.getSince());
         association.setManager(manager);
 
         try {
@@ -66,7 +69,7 @@ public class AssociationServiceImpl implements AssociationService {
     public Association findByCodeThrowsException(long code) {
         final Association association = repository.findByCode(code).orElse(null);
         if (association == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Associação não encontrada.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Associação não encontrada.");
         }
         return association;
     }
@@ -85,6 +88,14 @@ public class AssociationServiceImpl implements AssociationService {
 
         repository.delete(association);
         return true;
+    }
+
+    private Long getNextCode() {
+        final Association association = repository.findFirstByOrderByCodeDesc();
+        if (association == null) {
+            return 1L;
+        }
+        return association.getCode() + 1;
     }
 
 

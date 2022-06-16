@@ -23,5 +23,5 @@ public interface GraduationGradeRepository extends JpaRepository<GraduationGrade
 
     public List<GraduationGrade> findByAthleteAndGraduationIn(Athlete athlete, List<Graduation> graduations);
 
-    public void deleteByGraduationInAndProfessorIn(List<Graduation> graduations, List<Professor> professors);
+    public void deleteByGraduationAndProfessorIn(Graduation graduation, List<Professor> professors);
 }

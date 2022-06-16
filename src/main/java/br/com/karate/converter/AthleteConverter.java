@@ -5,6 +5,7 @@ import static br.com.karate.model.athlete.AthleteInput.*;
 import br.com.karate.converter.abstracts.AbstractConverter;
 import br.com.karate.model.athlete.Athlete;
 import br.com.karate.model.athlete.AthleteOutput;
+import br.com.karate.model.belt.Belt;
 import br.com.karate.model.person.Person;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +36,10 @@ public class AthleteConverter implements AbstractConverter<Athlete, Save, Athlet
         AthleteOutput.Dto dto = new AthleteOutput.Dto();
 
         dto.since = athlete.getSince();
-        dto.currentBelt = athlete.getCurrentBelt().getBelt();
+        final Belt belt =  athlete.getCurrentBelt();
+        if (belt != null) {
+            dto.currentBelt = belt.getBelt();
+        }
 
         if (athlete.getPerson() != null) {
             dto.person = personConverter.toDto(athlete.getPerson());

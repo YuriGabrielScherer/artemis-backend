@@ -1,18 +1,19 @@
 package br.com.karate.repository.graduation;
 
 import br.com.karate.model.graduation.Graduation;
-import br.com.karate.repository.AbstractRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface GraduationRepository extends AbstractRepository<Graduation> {
+public interface GraduationRepository extends JpaRepository<Graduation, UUID> {
 
     public List<Graduation> findAllByCodeIn(List<Long> codeList);
 
-    public Page<Graduation> findAllByCode(long code, Pageable pageable);
+    Graduation findFirstByOrderByCodeDesc();
 
+    Optional<Graduation> findByCode(long code);
 }

@@ -15,6 +15,7 @@ import br.com.karate.service.graduation.GraduationService;
 import br.com.karate.service.graduation.athlete.AthleteGraduationService;
 import br.com.karate.service.graduation.grade.GraduationGradeService;
 import br.com.karate.service.professor.ProfessorService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,30 +39,22 @@ public class GraduationController extends CrudAbstractController<Graduation, Sav
 
     @Autowired
     private GraduationService service;
-
     @Autowired
     private GraduationConverter converter;
     @Autowired
     private AthleteGraduationService athleteGraduationService;
-
     @Autowired
     private AthleteGraduationConverter athleteGraduationConverter;
-
     @Autowired
     private ProfessorService professorService;
-
     @Autowired
     private ProfessorConverter professorConverter;
-
     @Autowired
     private GraduationGradeService graduationGradeService;
-
     @Autowired
     private GraduationGradeConverter graduationGradeConverter;
-
     @Autowired
     private AthleteConverter athleteConverter;
-
     @PostMapping("/updateStatus")
     public ResponseEntity updateStatus(@RequestBody @Validated UpdateStatus input) {
         service.updateStatus(input.code, input.situation);
@@ -69,29 +63,31 @@ public class GraduationController extends CrudAbstractController<Graduation, Sav
 
     @PostMapping("/registerProfessors")
     public ResponseEntity registerProfessors(@RequestBody @Validated RegisterProfessors input) {
-        service.registerProfessors(input.graduationsCode, input.professorsCode);
+        service.registerProfessors(input.graduationCode, input.professorsCode);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/removeProfessors")
     public ResponseEntity removeProfessors(@RequestBody @Validated RegisterProfessors input) {
-        service.removeProfessors(input.graduationsCode, input.professorsCode);
+        service.removeProfessors(input.graduationCode, input.professorsCode);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/listProfessors")
     @Transactional(readOnly = true)
-    public ResponseEntity<PageableOutput> listProfessors(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("graduationCode") long graduationCode) {
+    public ResponseEntity<PageableOutput> listProfessors(@RequestParam String pageable, @RequestParam("graduationCode") long graduationCode) throws JsonProcessingException {
+        final PageableDto pageableDto = pageableConverter.toDto(pageable);
         final Graduation graduation = service.findByCodeThrowsException(graduationCode);
-        final Page<Professor> pagedResult = professorService.findProfessorsByGraduation(graduation, new PageableDto(page, size));
+        final Page<Professor> pagedResult = professorService.findProfessorsByGraduation(graduation, pageableDto);
         return ResponseEntity.ok(new PageableOutput(professorConverter.toDto(pagedResult.getContent()), pagedResult.getTotalElements()));
     }
 
     @GetMapping("/listAthletes")
     @Transactional(readOnly = true)
-    public ResponseEntity<PageableOutput> listAthletes(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("graduationCode") long graduationCode) {
+    public ResponseEntity<PageableOutput> listAthletes(@RequestParam String pageable, @RequestParam("graduationCode") long graduationCode) throws JsonProcessingException {
+        final PageableDto pageableDto = pageableConverter.toDto(pageable);
         final Graduation graduation = service.findByCode(graduationCode);
-        final Page<AthleteGraduation> pagedResult = athleteGraduationService.findByGraduation(graduation, new PageableDto(page, size));
+        final Page<AthleteGraduation> pagedResult = athleteGraduationService.findByGraduation(graduation, pageableDto);
         return ResponseEntity.ok(new PageableOutput(athleteGraduationConverter.toDto(pagedResult.getContent()), pagedResult.getTotalElements()));
     }
 
@@ -103,16 +99,23 @@ public class GraduationController extends CrudAbstractController<Graduation, Sav
 
     @PostMapping("/requestParticipation")
     public ResponseEntity requestParticipation(@RequestBody @Validated RequestParticipation input) {
-        input.athletes.forEach(athleteCode -> service.requestParticipation(input.graduationCode, athleteCode));
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        final List<String> errors = new ArrayList<>();
+        for (long athleteCode : input.athletes) {
+            try {
+                service.requestParticipation(input.graduationCode, athleteCode);
+            } catch (ResponseStatusException e) {
+                errors.add(String.format("Erro ao cadastrar o atleta código %s. Mensagem: %s", athleteCode, e.getReason()));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(errors);
     }
 
     @GetMapping("listGraduationGrades")
     @Transactional(readOnly = true)
-    public ResponseEntity<PageableOutput> listGraduationGrades(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("graduationCode") long graduationCode) {
-
+    public ResponseEntity<PageableOutput> listGraduationGrades(@RequestParam String pageable, @RequestParam("graduationCode") long graduationCode) throws JsonProcessingException {
+        final PageableDto pageableDto = pageableConverter.toDto(pageable);
         final Graduation graduation = service.findByCodeThrowsException(graduationCode);
-        final Page<AthleteGraduation> athletes = athleteGraduationService.findByGraduation(graduation, new PageableDto(page, size));
+        final Page<AthleteGraduation> athletes = athleteGraduationService.findByGraduation(graduation, pageableDto);
         final List<GraduationGrade> grades = graduationGradeService.listGradesByAthletes(graduation, athletes.toList().stream().map(AthleteGraduation::getAthlete).collect(Collectors.toList()));
         return ResponseEntity.ok(new PageableOutput(graduationGradeConverter.toDto(grades), athletes.getTotalElements()));
     }

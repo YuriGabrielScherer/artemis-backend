@@ -35,8 +35,12 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person save(Person input) {
 
-        final Person person = personRepository.findByCode(input.getCode()).orElse(new Person());
-        person.setCode(input.getCode());
+        Person person = personRepository.findByCode(input.getCode()).orElse(null);
+        if (person == null) {
+            person = new Person();
+            person.setCode(getNextCode());
+
+        }
         person.setName(input.getName());
         person.setBirth(input.getBirth());
         person.setGender(input.getGender());
@@ -101,5 +105,13 @@ public class PersonServiceImpl implements PersonService {
 
         personRepository.delete(person);
         return true;
+    }
+
+    private Long getNextCode() {
+        final Person person = personRepository.findFirstByOrderByCodeDesc();
+        if (person == null) {
+            return 1L;
+        }
+        return person.getCode() + 1;
     }
 }

@@ -63,8 +63,8 @@ public class GraduationGradeServiceImpl implements GraduationGradeService {
     }
     @Override
     @Transactional
-    public void removeProfessors(List<Graduation> graduations, List<Professor> professors) {
-        repository.deleteByGraduationInAndProfessorIn(graduations, professors);
+    public void removeProfessors(Graduation graduation, List<Professor> professors) {
+        repository.deleteByGraduationAndProfessorIn(graduation, professors);
     }
 
     @Override

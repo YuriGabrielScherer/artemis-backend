@@ -42,7 +42,7 @@ public class AthleteGraduationConverter implements SimpleConverter<AthleteGradua
 
     public AthleteDto toAthleteDto(AthleteGraduation input, List<GraduationGrade> grades) {
         final AthleteDto dto = new AthleteDto();
-        dto.grade = input.getGrade();
+        dto.grade = input.getGrade() != null ? input.getGrade() : 0.0;
         dto.situation = input.getSituation();
         dto.belt = input.getBelt().getBelt();
         dto.graduation = graduationConverter.toDto(input.getGraduation());

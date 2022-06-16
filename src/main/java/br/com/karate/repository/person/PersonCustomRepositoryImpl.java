@@ -24,7 +24,6 @@ import static br.com.karate.model.person.QPerson.person;
 
 @Repository
 public class PersonCustomRepositoryImpl implements PersonCustomRepository {
-
     @PersistenceContext
     private EntityManager em;
 
@@ -61,7 +60,6 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
 
         final long count = query.stream().count();
 
-
         PathBuilder<Person> orderByExpression = new PathBuilder(Person.class, Person.class.getSimpleName().toLowerCase());
         for (Sort.Order o : pageable.getSort()) {
             query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, orderByExpression.get(o.getProperty())));
@@ -70,6 +68,4 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
 
         return new PageImpl<>(people, pageable, count);
     }
-
-
 }

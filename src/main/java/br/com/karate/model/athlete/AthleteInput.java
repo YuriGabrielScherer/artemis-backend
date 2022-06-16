@@ -27,7 +27,6 @@ public class AthleteInput {
     @Setter
     @Getter
     public static class Filter {
-        public long code;
         public LocalDate since;
         public EnumBelt belt;
         public PersonInput.Filter person;

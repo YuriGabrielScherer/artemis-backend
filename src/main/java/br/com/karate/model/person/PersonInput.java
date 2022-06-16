@@ -16,10 +16,7 @@ import java.time.LocalDate;
 public class PersonInput {
 
     public static class Save {
-        @NotNull(message = "Código da Pessoa é obrigatório")
-        @Min(value = 1, message = "Código inválido")
         public long code;
-
         @NotNull(message = "Nome da Pessoa é obrigatório")
         @NotBlank(message = "Nome da Pessoa é obrigatório")
         public String name;

@@ -11,9 +11,9 @@ public interface GraduationService extends CrudAbstractService<Graduation, Gradu
 
     public void updateStatus(Long code, EnumGraduationSituation newSituation);
 
-    public void registerProfessors(List<Long> graduationsCode, List<Long> professorsCode);
+    public void registerProfessors(Long graduationCode, List<Long> professorsCode);
 
-    public void removeProfessors(List<Long> graduationsCode, List<Long> professorsCode);
+    public void removeProfessors(Long graduationCode, List<Long> professorsCode);
 
     public void requestParticipation(long graduationCode, long athleteCode);
 

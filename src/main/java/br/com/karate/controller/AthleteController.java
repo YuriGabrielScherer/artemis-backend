@@ -52,11 +52,11 @@ public class AthleteController extends CrudAbstractController<Athlete, AthleteIn
 
     @GetMapping("/listAvailableAthletesToGraduation")
     @Transactional(readOnly = true)
-    public ResponseEntity<PageableOutput> listAvailableProfessorsToGraduation(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("graduationCode") long graduationCode) {
-
+    public ResponseEntity<PageableOutput> listAvailableAthletesToGraduation(@RequestParam String pageable, @RequestParam("graduationCode") long graduationCode) throws JsonProcessingException {
+        final PageableDto pageableDto = pageableConverter.toDto(pageable);
         final Graduation graduation = graduationService.findByCodeThrowsException(graduationCode);
 
-        final Page<Athlete> pagedResult = service.findAvailableAthletesToGraduation(graduation, new PageableDto(page, size));
+        final Page<Athlete> pagedResult = service.findAvailableAthletesToGraduation(graduation, pageableDto);
         return ResponseEntity.ok(new PageableOutput(converter.toDto(pagedResult.getContent()), pagedResult.getTotalElements()));
     }
 

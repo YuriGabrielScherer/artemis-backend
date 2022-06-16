@@ -110,7 +110,6 @@ public class AthleteServiceImpl implements AthleteService {
 
     @Override
     public Page<Athlete> findAvailableAthletesToGraduation(Graduation graduation, PageableDto input) {
-        final Pageable pageable = PageRequest.of(input.getPage(), input.getSize());
-        return customRepository.findAvailableAthletesToGraduation(graduation, pageable);
+        return customRepository.findAvailableAthletesToGraduation(graduation, input.getPageable());
     }
 }

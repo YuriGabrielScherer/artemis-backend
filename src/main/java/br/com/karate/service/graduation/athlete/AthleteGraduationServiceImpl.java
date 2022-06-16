@@ -11,8 +11,6 @@ import br.com.karate.repository.graduation.AthleteGraduationRepository;
 import br.com.karate.service.belt.BeltService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,14 +37,18 @@ public class AthleteGraduationServiceImpl implements AthleteGraduationService {
             athleteGraduation.setGraduation(graduation);
 
             LocalDate lastAthleteGraduation = null;
+            EnumBelt lastBelt = null;
+
             final AthleteGraduation lastGraduation = getLastAthleteGraduationApproved(athlete);
             if (lastGraduation == null || lastGraduation.getGraduation() == null) {
                 lastAthleteGraduation = athlete.getSince();
+                lastBelt = EnumBelt.WHITE;
             } else {
                 lastAthleteGraduation = lastGraduation.getGraduation().getDate();
+                lastBelt = lastGraduation.getBelt().getBelt();
             }
 
-            final Belt belt = beltService.validateCanGraduateAndReturnNextBelt(EnumBelt.YELLOW, lastAthleteGraduation, graduation.getDate());
+            final Belt belt = beltService.validateCanGraduateAndReturnNextBelt(lastBelt, lastAthleteGraduation, graduation.getDate());
             athleteGraduation.setBelt(belt);
         }
 
@@ -62,14 +64,12 @@ public class AthleteGraduationServiceImpl implements AthleteGraduationService {
 
     @Override
     public Page<AthleteGraduation> findByAthlete(Athlete athlete, PageableDto pageableDto) {
-        Pageable pageable = PageRequest.of(pageableDto.getPage(), pageableDto.getSize());
-        return repository.findByAthlete(athlete, pageable);
+        return repository.findByAthlete(athlete, pageableDto.getPageable());
     }
 
     @Override
     public Page<AthleteGraduation> findByGraduation(Graduation graduation, PageableDto pageableDto) {
-        Pageable pageable = PageRequest.of(pageableDto.getPage(), pageableDto.getSize());
-        return repository.findByGraduation(graduation, pageable);
+        return repository.findByGraduation(graduation, pageableDto.getPageable());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class AthleteGraduationServiceImpl implements AthleteGraduationService {
     }
 
     private AthleteGraduation getLastAthleteGraduationApproved(Athlete athlete) {
-        return repository.findFirstByAthleteAndSituationOrderByCreatedDateDesc(athlete, EnumAthleteGraduationSituation.APPROVED);
+        return repository.findFirstByAthleteAndSituationAndGraduationNotNullOrderByGraduationDateDesc(athlete, EnumAthleteGraduationSituation.APPROVED);
     }
 
 }

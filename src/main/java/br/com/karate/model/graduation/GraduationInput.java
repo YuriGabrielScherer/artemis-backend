@@ -16,8 +16,6 @@ import java.util.List;
 public class GraduationInput {
 
     public static class Save {
-        @NotNull(message = "Código é obrigatório")
-        @Min(value = 1, message = "Código inválido")
         public long code;
 
         @NotNull(message = "Título do Evento é obrigatório")
@@ -56,8 +54,8 @@ public class GraduationInput {
 
     public static class RegisterProfessors {
         @NotNull(message = "Código do exame de graduação é obrigatório.")
-        @NotEmpty(message = "Insira ao menos um exame de graduação.")
-        public List<Long> graduationsCode;
+        @Min(value = 1, message = "Código do exame de graduação inválido")
+        public Long graduationCode;
 
         @NotNull(message = "Código dos professores é obrigatório.")
         @NotEmpty(message = "Insira ao menos um professor.")
