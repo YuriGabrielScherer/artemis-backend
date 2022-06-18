@@ -238,6 +238,11 @@ public class GraduationServiceImpl implements GraduationService {
         graduationGradeService.save(graduation, athleteGraduation.getAthlete(), professor, grade, description);
     }
 
+    @Override
+    public long countFutureGraduation() {
+        return repository.countByDateAfter(LocalDate.now());
+    }
+
     private void finishGraduation(Graduation graduation) {
         final List<Athlete> athletes = graduation.getAthleteGraduations().stream().map(AthleteGraduation::getAthlete).collect(Collectors.toList());
         final List<Professor> professors = new ArrayList<>(graduation.getProfessors());

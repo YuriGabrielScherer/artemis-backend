@@ -55,6 +55,7 @@ public class GraduationController extends CrudAbstractController<Graduation, Sav
     private GraduationGradeConverter graduationGradeConverter;
     @Autowired
     private AthleteConverter athleteConverter;
+
     @PostMapping("/updateStatus")
     public ResponseEntity updateStatus(@RequestBody @Validated UpdateStatus input) {
         service.updateStatus(input.code, input.situation);
@@ -144,4 +145,10 @@ public class GraduationController extends CrudAbstractController<Graduation, Sav
         return ResponseEntity.ok(athleteConverter.toDto(athletes));
     }
 
+    @GetMapping("countFutureGraduation")
+    @Transactional(readOnly = true)
+    public ResponseEntity countFutureGraduation() {
+        final long count = service.countFutureGraduation();
+        return ResponseEntity.ok(count);
+    }
 }

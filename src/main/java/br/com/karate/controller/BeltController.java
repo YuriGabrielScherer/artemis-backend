@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("belt")
 public class BeltController extends AbstractController {
@@ -25,12 +24,10 @@ public class BeltController extends AbstractController {
     private PageableConverter pageableConverter;
     @Autowired
     private BeltConverter converter;
-
     @PostMapping("/save")
     public ResponseEntity save(@RequestBody @Validated BeltInput.Save payload) {
         return ResponseEntity.ok(converter.toDto(service.save(converter.toEntity(payload))));
     }
-
     @GetMapping("/list")
     @Transactional(readOnly = true)
     public ResponseEntity<PageableOutput> list(@RequestParam String pageable) throws JsonProcessingException {

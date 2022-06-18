@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class GraduationInput {
@@ -39,8 +40,8 @@ public class GraduationInput {
         public String title;
         public String description;
         public String place;
-        public LocalDate date;
-
+        public LocalDateTime dateBegin;
+        public LocalDateTime dateEnd;
         public List<Long> athletesCode;
     }
 

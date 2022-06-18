@@ -21,4 +21,6 @@ public interface GraduationService extends CrudAbstractService<Graduation, Gradu
 
     public void setGraduationGrade(long graduationCode, long athleteCode, long professorCode, double grade, String description);
 
+    public long countFutureGraduation();
+
 }

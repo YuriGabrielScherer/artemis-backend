@@ -83,7 +83,7 @@ public class AthleteCustomRepositoryImpl extends AbstractRepository<Athlete, QAt
         }
 
         if (filter.belt != null) {
-            predicate.and(athlete.belt.eq(filter.belt));
+            predicate.and(athlete.currentBelt.belt.eq(filter.belt));
         }
 
         return find(pageable, predicate);

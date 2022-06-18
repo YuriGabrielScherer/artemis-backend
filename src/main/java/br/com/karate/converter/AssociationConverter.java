@@ -78,4 +78,16 @@ public class AssociationConverter implements AbstractConverter<Association, Asso
         return null;
     }
 
+    public AssociationOutput.TopAssociations toTopAthleteAssociation(Association association) {
+        final AssociationOutput.TopAssociations output = new AssociationOutput.TopAssociations();
+
+        output.name = association.getName();
+        output.count = association.getPeople().size();
+
+        return output;
+    }
+
+    public List<AssociationOutput.TopAssociations> toTopAthleteAssociations(List<Association> associations) {
+        return associations.stream().map(this::toTopAthleteAssociation).collect(Collectors.toList());
+    }
 }

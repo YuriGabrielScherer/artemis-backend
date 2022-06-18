@@ -6,6 +6,8 @@ import br.com.karate.model.graduation.GraduationOutput;
 import br.com.karate.model.graduation.history.GraduationHistory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -81,7 +83,8 @@ public class GraduationConverter implements AbstractConverter<Graduation, Save, 
             return new Filter();
         }
 
-        final Filter output = new ObjectMapper().readValue(filterInput, Filter.class);
+        ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+        final Filter output = mapper.readValue(filterInput, Filter.class);
         return output;
     }
 }

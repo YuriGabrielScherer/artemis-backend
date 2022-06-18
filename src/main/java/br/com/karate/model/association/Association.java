@@ -8,13 +8,13 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 @Table(name = "associations")
 public class Association extends EntityAudit<UUID> {
@@ -29,8 +29,11 @@ public class Association extends EntityAudit<UUID> {
     private String name;
     private String city;
     private LocalDate since;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_manager")
     private Person manager;
+
+    @OneToMany(mappedBy = "association")
+    private Set<Person> people;
+
 }

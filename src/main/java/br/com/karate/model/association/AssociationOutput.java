@@ -16,4 +16,9 @@ public class AssociationOutput {
         public PersonOutput.Dto manager;
     }
 
+    public static class TopAssociations {
+        public String name;
+        public long count;
+    }
+
 }

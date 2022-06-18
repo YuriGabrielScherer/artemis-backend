@@ -4,6 +4,7 @@ import br.com.karate.model.association.Association;
 import br.com.karate.model.association.AssociationInput;
 import br.com.karate.model.person.Person;
 import br.com.karate.model.util.pageable.PageableDto;
+import br.com.karate.repository.association.AssociationCustomRepository;
 import br.com.karate.repository.association.AssociationRepository;
 import br.com.karate.repository.person.PersonRepository;
 import org.hibernate.exception.ConstraintViolationException;
@@ -23,6 +24,9 @@ public class AssociationServiceImpl implements AssociationService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private AssociationCustomRepository customRepository;
 
     @Override
     public Association save(Association input) {
@@ -99,4 +103,8 @@ public class AssociationServiceImpl implements AssociationService {
     }
 
 
+    @Override
+    public List<Association> listTopAssociationsByAthletes() {
+        return customRepository.topAssociationsByAthletesNumber();
+    }
 }

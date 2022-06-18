@@ -33,8 +33,12 @@ public class GraduationCustomRepositoryImpl extends AbstractRepository<Graduatio
             predicate.and(graduation.code.eq(filter.code));
         }
 
-        if (filter.date != null) {
-            predicate.and(graduation.date.eq(filter.date));
+        if (filter.dateBegin != null) {
+            predicate.and(graduation.date.after(filter.dateBegin.toLocalDate()));
+        }
+
+        if (filter.dateEnd != null) {
+            predicate.and(graduation.date.before(filter.dateBegin.toLocalDate()));
         }
 
         if (filter.title != null && filter.title.length() > 0) {
